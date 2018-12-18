@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+.side{
+  position:fixed;
+  top:0;
+  left:0;
+  height:100%;
+  padding:0;
+}
+
+.scroll-area{
+  width:100%;
+  height: 350px;
+  overflow-y:scroll;
+}
+.small_text{
+  font: italic 10px sans-serif;
+}
+.slidecontainer {
+  width: 50%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 20px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+</style>
+
+<link rel="stylesheet" href="style.css">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="lib/require.js"></script>
+<script src="tree.js"></script>
+<script src="data.js"></script>
+
+ 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<title>SQL ANIMATION</title>
+</head>
+<body>
+<div class="container-fluid border-bottom-0 bg-dark text-info">
+  <nav class=" navbar navbar-expand-lg navbar-dark bg-info">
+    <a class="navbar-brand" href="#">SQL Animation</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Github Repo<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="#">About<span class="sr-only">(current)</span></a>
+        </li>        
+      </ul>
+      <a class="nav-link active text-white" href="./metadata.html">Meta Data</a>
+    </div>    
+  </nav>
+
+  <br>
+  <div>
+    <div class="form-group">
+      <label for="formGroupExampleInput">Enter an sql statement and click Execute:</label>
+      <input list="sqlList-dataList" type="text" class="form-control" id="sqlList" placeholder="Enter SQL query here" onKeydown="Javascript: if(event.keyCode==13) execute();" required> 
+    </div>
+    <div class="form-group">
+      <div class="slidecontainer">
+        <label for="formGroupExampleInput">Pick interval duration for your animation:</label>
+        <input type="range" min="1" max="8" value="4" class="slider" id="myRange">
+        <p>Inveral Duration: <span id="speed"></span></p>
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-success" type="button" id="execute" onclick="execute()">Execute</button>
+      <button class="btn btn-danger" type="button" id="clear" onclick="clear_query()">Clear Query</button>
+      <button class="btn btn-info" type="button" id="clear" onclick="toggle_tree()">Toggle Tree</button>
+      <button class="btn btn-info" type="button" id="clear" onclick="toggle_animation_window()">Toggle Animation Window</button>
+     
+    </div>
+    <p id="error" style="color:red"></p>
+  </div>
+ 
+ 
+  
+  <datalist id="sqlList-dataList">
+    <option value="SELECT * FROM CUSTOMERS"></option>
+    <option value="SELECT * FROM SUPPLIERS"></option>
+    <option value="SELECT * FROM SUPPLIERS SUPPLIERSRENAMED"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID >= 567890123"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID <= 567890123"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID < 567890123"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID > 567890123"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID != 345678901"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE FIRST_NAME <> 'BIKRAM'"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE LAST_NAME ^= 'PAUDEL'"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID ~= 345678901"></option>
+    <option value="SELECT FIRSTNAMEOFCUSTOMER.FIRST_NAME FROM CUSTOMERS FIRSTNAMEOFCUSTOMER"></option>
+    <option value="SELECT SUPPLIERS.SNAME FROM SUPPLIERS"></option> 
+    <option value="SELECT P.PNAME, S.SNAME FROM SUPPLIERS S JOIN PRODUCTS P ON S.SID = P.SUPPLIER_ID"></option>
+    <option value="SELECT CUSTOMERS.FIRST_NAME, LAST_NAME FROM CUSTOMERS WHERE CUSTOMERS.FIRST_NAME='BIKRAM'"></option>
+    <option value="SELECT * FROM CUSTOMERS WHERE CID=678901234"></option>
+    <option value="SELECT CID,FIRST_NAME FROM CUSTOMERS WHERE CID=678901234"></option>
+    <option value="SELECT FIRST_NAME,LAST_NAME FROM CUSTOMERS WHERE CID=345678901"></option>
+    <option value="SELECT * FROM SUPPLIERS WHERE SNAME='OK COMPANY'"></option>
+    <option value="SELECT PNAME, SNAME FROM SUPPLIERS JOIN PRODUCTS ON SID=SUPPLIER_ID WHERE SNAME='TX COMPANY'"></option>
+    <option value="SELECT SNAME,PNAME FROM SUPPLIERS JOIN PRODUCTS ON SID=SUPPLIER_ID WHERE SNAME='OK COMPANY'"></option>
+    <option value="SELECT SNAME, PNAME FROM SUPPLIERS JOIN PRODUCTS ON SUPPLIER_ID = SID WHERE SNAME='OK COMPANY'"></option>
+    <option value="SELECT SNAME, PNAME FROM SUPPLIERS JOIN PRODUCTS ON SUPPLIER_ID = SID WHERE SUPPLIERS.SNAME ='OK COMPANY'"></option>
+    <option value="SELECT * FROM SUPPLIERS WHERE SUPPLIERS.SNAME ='OK COMPANY'"></option>
+    <option value="SELECT SNAME, PNAME FROM SUPPLIERS JOIN PRODUCTS ON SUPPLIERS.SID=PRODUCTS.SUPPLIER_ID WHERE SNAME='OK COMPANY'"></option>
+    <option value="SELECT SID * SID, SNAME FROM SUPPLIERS"</option>
+    <option value="SELECT CID + CID, 1 + 3 * 5, 10 / 2, FIRST_NAME FROM CUSTOMERS"</option>
+    <option value="SELECT 3 + 5 AS COL1, OID, STATUS FROM ORDERS"</option>
+    <option value="SELECT FIRST_NAME AS FNAME, CID FROM CUSTOMERS"</option>
+    <option value="SELECT 10 + CID + CID, FIRST_NAME FROM CUSTOMERS"</option>
+    <option value="SELECT 'BIKRAM' AS ADMIN, FIRST_NAME, LAST_NAME FROM CUSTOMERS"</option> 
+    <option value="SELECT CID - 10, LAST_NAME FROM CUSTOMERS"</option>
+    <option value="SELECT PRODUCTS.PNAME, SUPPLIERS.SNAME FROM SUPPLIERS JOIN PRODUCTS ON SID=SUPPLIER_ID WHERE SNAME='TX COMPANY'"></option>
+	  <option value="SELECT FIRST_NAME, LAST_NAME FROM CUSTOMERS WHERE FIRST_NAME='BIKRAM' AND LAST_NAME='PAUDEL'"</option>
+  </datalist>
+  <br>
+  <div class="tree" id="tree" style="overflow:scroll; background-color:white;">
+
+    <!--<div  style="border:1px solid #ffff; background-color:white; width:100%; height:675px; overflow:scroll;"></div>-->
+    <svg  id ="svg_tree" style="border:1px solid #ffff;   overflow:scroll;"xmlns="http://www.w3.org/2000/svg"> </svg>
+  </div>
+  <center><h2>Animation Window</h2></center>
+  <div class="container-fluid bg-light" style="height:450px; overflow:auto;" id="animation_window">
+        
+    <div class="row">
+                
+      <div class="col mt-3" >
+        <p id="animation"></p>
+      </div>
+		  <div style="border-left: 6px solid green; height: 450px;"></div>
+                
+      <div class="col mt-3 side">
+		    <div class="scroll-area">
+          <p id="info"></p>
+		    </div>
+      </div>
+		              
+    </div>
+    <br/> 
+  </div>
+  <br/>
+  <center><h4>Final Result</h4></center>
+  <center><div class="bg-light" style="height:100px;width:50%;"><p id="result"></p></div></center> 
+  <footer class="footer">
+    <div class="container">
+      <p class="text-center text-muted">@ 2018 CS UCO</a></p>
+    </div>
+  </footer>  
+</div>
+ 
+
+<script>
+
+"use strict"
+
+//ANIMATION CODES------------------------------------------------------------------------------------------------------
+
+var speed=2000;
+var animationFlag0=0;
+var animationFlag=0;
+
+var slider = document.getElementById("myRange");
+var output = document.getElementById("speed");
+output.innerHTML = "1 sec ";
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+  if(slider.value==1){
+    speed=250;
+    output.innerHTML = "0.25 sec";
+  }else if(slider.value==2){
+    speed=500;
+    output.innerHTML = "0.5 sec";
+  }else if(slider.value==3){
+    speed=750;
+    output.innerHTML = "0.75 sec";
+  }else if(slider.value==4){
+    speed=1000;
+    output.innerHTML = "1 sec";
+  }else if(slider.value==5){
+    speed=1500;
+    output.innerHTML = "1.5 sec";
+  }else if(slider.value==6){
+    speed=2000;
+    output.innerHTML = "2 sec";
+  }else if(slider.value==7){
+    speed=3000;
+    output.innerHTML = "3 sec";
+  }else if(slider.value==8){
+    speed=5000;
+    output.innerHTML = "5 sec";
+  }
+}
+
+//This class is responsible for handling all animation.
+class AnimationExecutor{
+  /*This is custom sleep function using promise. But we've not used it currently
+  sleep_with_promise(){
+    return new Promise(resolve=>setTimeout(resolve,1000));
+  } 
+  */
+  //This function writes text info stating which table is being displayed. It also highlights the corresponding node.
+  async animate_op_table_name(animFlag0, speed,tableIndex,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Display table name: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		  },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Displaying: " +schema[tableIndex].tabName_+"."+"<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //The following line is commented out. If uncommented, it scrolls the view to recent text info.
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    console.log("Displaying table name"); 
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;   
+    }); 
+  }
+
+
+  //This function writes text info stating information about qualify operation. It also highlights the corresponding node.
+  async animate_op_qualify(animFlag0,speed,arg1,arg2,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Qualify: inside qualify",animFlag0, animationFlag);
+			  resolve();
+		  },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Executing qualify between " +arg1+ " and "+arg2+".<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //The following line is commented out. If uncommented, it scrolls the view to recent text info.
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;    
+    });
+  }
+
+
+  //This function writes text info stating information about rename operation. It also highlights the corresponding node.
+  async animate_op_rename_col(animFlag0,speed,old_col_name,new_col_name,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Renaming column: inside rename column",animFlag0, animationFlag);
+			  resolve();
+		  },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Renaming column " +old_col_name+ " to "+new_col_name+".<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //The following line is commented out. If uncommented, it scrolls the view to recent text info.
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");  
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;   
+    });
+  }
+
+
+
+  //This function writes text info stating information about rename table operation. It also highlights the corresponding node.
+  async animate_op_rename_table(animFlag0,speed,tableIndex,cursorName,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Display rename table info: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		  },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Renaming " +schema[tableIndex].tabName_+ " to "+cursorName+".<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;    
+    }); 
+  }
+ 
+
+
+  //This function writes text info stating information about cross product and displaying information. It also highlights the corresponding node.
+  async animate_op_cursor_name(animFlag0,speed,firstArg, secondArg,thirdArg,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Display cursor name: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Executing Cross Product between " +schema[firstArg].tabName_+ " and "+schema[secondArg].tabName_+" and displaying result " +schema[thirdArg].tabName_+".<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    console.log("Displaying Cursor name");
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    });
+  }
+
+
+
+  //This function writes text info stating information about Project operation. It also highlights the corresponding node.
+  async animate_op_proj(animFlag0,speed,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Display cursor name: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Executing Operation Project.<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;   
+    });
+  }
+
+
+  //This function writes text info stating information about Select operation. It also highlights the corresponding node.
+  async animate_op_sel(animFlag0,speed,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("OP SELECT",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Executing Select Operation.<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("info"));
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated rubberBand").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    }); 
+  }
+
+  //This function is reponsible for creating new table and deleting old table and animating the table.
+  async displayTable(animFlag0, speed, tableIndex){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("Display table: inside while loop",animFlag0, animationFlag);
+			resolve();
+		    },speed));
+    }
+    console.log("Displaying Table");
+    var tbl = document.getElementById("animationTable");
+    if(tbl) tbl.parentNode.removeChild(tbl);
+    var x= document.createElement("TABLE");
+    x.setAttribute("id","animationTable");
+    x.style.display="inline-block";
+    x.style.float="left";
+    document.getElementById("animation").appendChild(x);
+    var currentCaption=document.getElementById("animationTable").createCaption();
+    currentCaption.innerHTML="<b>"+schema[tableIndex].tabName_+"</b>";
+    var c = document.createElement("TR");
+    document.getElementById("animationTable").appendChild(c);
+    c.setAttribute("id","animationTableR");
+    for(var i=0; i< schema[tableIndex].columns_.length; i++){
+      var a = document.createElement("TD");
+      var b= document.createTextNode(schema[tableIndex].columns_[i].colName_);
+      document.getElementById("animationTableR").appendChild(a);
+      document.getElementById("animationTableR").style="background-color:#4CAF50; color:white";
+      a.appendChild(b);
+    } 
+    for(var i=0; i< data[tableIndex].length; i++){
+      var a = document.createElement("TR");
+      a.setAttribute("id", "animationTableR"+i);
+      document.getElementById("animationTable").appendChild(a);
+      for(var j=0; j< data[tableIndex][i].length; j++){
+        var d= document.createElement("TD");
+        var e= document.createTextNode(JSON.stringify(data[tableIndex][i][j]));
+        d.appendChild(e);
+        document.getElementById("animationTableR"+i).appendChild(d);
+      }
+              
+    }
+    $("#animationTable").addClass("animated rollIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;
+    });
+  }
+
+  
+  //This function is responsible for selecting a row and animating it.
+  async selectRow(animFlag0,speed,row){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+      console.log("Selecting row: inside while loop",animFlag0, animationFlag);
+      resolve();
+      },speed));
+    }
+    //$("#animationTableR"+row).addClass("highlight");
+    $("#animationTableR"+row).addClass("animated flip").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      console.log("After select row animation", animationFlag);
+      $("#animationTableR"+row).removeClass("highlight");
+      var cells = document.querySelector("#animationTableR"+row+" > td");
+      $(cells).removeClass("highlightCell");
+
+      animationFlag++;
+    });
+  }
+
+
+
+
+  //This function is responsible for highlighting the JOIN_CROSS_COMMA node in the tree.
+  async animate_join_cross_comma(animFlag0,speed,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+      console.log("ANIMATE JOIN CROSS COMMA",animFlag0, animationFlag);
+      resolve();
+      },speed));
+    }
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    animationFlag++;
+  }
+
+
+
+  //This function adds animation info about Selecting column and also highlights the selected column. 
+  async animate_selecting_col(animFlag0,speed,colIndex_,columnName){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+      console.log("Selecting a column: inside while loop with colIndex_",colIndex_,animFlag0, animationFlag);
+      resolve();
+      },speed));
+    }
+    var columnIndex = colIndex_+1;
+    var index=createAnimationInfoIdentifier();
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Selecting column "+columnName+"<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var called = false;
+    $("tr td:nth-child("+columnIndex+")" ).addClass("highlight");
+    $("tr td:nth-child("+columnIndex+")").addClass("animated flip").one('animationend oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      if(called==false){
+        //$("tr td:nth-child("+columnIndex+")" ).removeClass("highlight");
+        animationFlag++;
+        called = true;
+      }else{
+        return;
+      }     
+    });
+  }      
+  
+
+  //This function adds the column to a table and animates it. 
+  async animate_adding_col(animFlag0,speed,colHeader,colValue){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+      console.log("Adding a column: inside while loop",animFlag0, animationFlag);
+      resolve();
+      },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    var textinfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(textinfo);
+    textinfo.setAttribute("id","animationInfo"+index);
+    textinfo.innerHTML = "Adding column "+colHeader+"<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    //textinfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    $("#animationTable tr:first").append($("<td>"+colHeader+"</td>"));
+    if(typeof colValue=="string"){
+      $("#animationTable tr").not(':first').append($("<td>&quot;"+colValue+"&quot;</td>"));
+    }else if(typeof colValue=="number"){
+      $("#animationTable tr").not(':first').append($("<td>"+colValue+"</td>"));
+    }
+    $("tr td:last-child").addClass("highlight");
+    var animated = false;
+    $("tr td:last-child").addClass("animated rollIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      if(animated==false){
+        animationFlag++;
+        animated=true;
+      }else{
+        return;
+      }
+    });   
+  }      
+
+
+  //This function adds the cell to the table as calculation happens in background and results are added to the table.
+  async animate_adding_cell(animFlag0,speed,result,row,columnName,lastRow){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+      console.log("Adding a cell: inside while loop",animFlag0, animationFlag);
+      resolve();
+      },speed));
+    }  
+    if(row==0){
+      var index=createAnimationInfoIdentifier();
+      var textinfo = document.createElement('SPAN');
+      document.getElementById("info").appendChild(textinfo);
+      textinfo.setAttribute("id","animationInfo"+index);
+      textinfo.innerHTML = "Adding column "+columnName+"<br/>";
+      document.getElementById("animationInfo"+index).style.fontsize="large";
+
+      if(typeof result=="string"){
+        $("#animationTable tr:first").append($("<td>"+columnName+"</td>"));
+        $("#animationTable tr").eq(row+1).append($("<td>&quot;"+result+"&quot;</td>"));
+      }else if(typeof result=="number"){
+        $("#animationTable tr:first").append($("<td>"+columnName+"</td>"));
+        $("#animationTable tr").eq(row+1).append($("<td>"+result+"</td>"));
+      }
+      $("#animationTable tr:first td:last").addClass("highlight");
+      $("#animationTable tr:eq("+(row+1)+") td:last").addClass("highlight");
+    }
+    else{
+      if(typeof result=="string"){
+        ("#animationTable tr").eq(row+1).append($("<td>&quot;"+result+"&quot;</td>"));
+      }else if(typeof result=="number"){
+        $("#animationTable tr").eq(row+1).append($("<td>"+result+"</td>"));
+      }
+      $("#animationTable tr:eq("+(row+1)+") td:last").addClass("highlight"); 
+    } 
+    $("#animationTable tr:eq("+(row+1)+") td:last").addClass("animated rollIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){   
+      animationFlag++;   
+    });   
+  }      
+
+
+  //This function deletes the row and also animates it.
+  async deleteRow(animFlag0,speed,row){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+      console.log("Deleting row: inside while loop",animFlag0, animationFlag);
+      resolve();
+      },speed));
+    }
+    $("#animationTableR"+row).addClass("animated rollOut").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      $(this).remove();
+      animationFlag++;  
+    });  
+  }
+
+
+  //This function adds the animation info about Op Less Equal operation.
+  async animate_op_less_equal(animFlag0,speed,param1, param2,row,columnsToBeHighlighted,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("less equal: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    $("#animationTableR"+row).addClass("highlight");
+    if(columnsToBeHighlighted.length==1){
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+    }else{
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[1]).addClass("highlightCell");
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing: "+param1+ " <= "+param2+": ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;
+    });
+  }
+
+
+  //This function adds the animation info about Op Add operation.
+  async animate_op_add(animFlag0,speed, arg1,arg2,node_index){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("op add: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing "+arg1+ " + "+arg2+":<br/> ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_index);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    });
+  }
+
+
+  //This function adds the animation info about Op Substract operation.
+  async animate_op_subtract(animFlag0,speed, arg1,arg2,node_index){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("op add: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing "+arg1+ " - "+arg2+":<br/> ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_index);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    });
+  }
+
+
+  //This function adds the animation info about Op Multiply operation.
+  async animate_op_multiply(animFlag0,speed, arg1,arg2,node_index){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("op add: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing "+arg1+ " * "+arg2+":<br/> ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_index);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    });
+  }
+
+
+  //This function adds the animation info about Op Divide operation.
+  async animate_op_divide(animFlag0,speed, arg1,arg2,node_index){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("op add: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing "+arg1+ " / "+arg2+":<br/> ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_index);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    });
+  }
+
+
+  //This function adds the result of Where Clause to the animation info window.
+  async animate_result(animFlag0,speed,result){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("inside animate_result: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = ": "+ result+ "<br/>";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;
+    });
+  }
+
+
+  //This function adds the animation info about Op Not Equal operation.
+  async animate_op_not_equal(animFlag0,speed,param1, param2,row, columnsToBeHighlighted,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("not equal: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    $("#animationTableR"+row).addClass("highlight");
+    if(columnsToBeHighlighted.length==1){
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+    }else{
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[1]).addClass("highlightCell");
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing: "+param2+ " NOT EQUAL "+param1+": ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;
+    });
+  }
+
+
+  //This function adds the animation info about Op Greater Equal operation.
+  async animate_op_greater_equal(animFlag0,speed,param1, param2,row, columnsToBeHighlighted,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("greater equal: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+
+    $("#animationTableR"+row).addClass("highlight");
+    if(columnsToBeHighlighted.length==1){
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+    }else{
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[1]).addClass("highlightCell");
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing: "+param1+ " >= "+param2+": ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated rotateIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;
+    });
+  }
+
+
+  //This function adds the animation info about Op Less operation.
+  async animate_op_less(animFlag0,speed,param1, param2,row,columnsToBeHighlighted,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("less equal: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    $("#animationTableR"+row).addClass("highlight");
+    if(columnsToBeHighlighted.length==1){
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+    }else{
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[1]).addClass("highlightCell");
+    }
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing: "+param1+ " < "+param2+": ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;  
+    });
+  }
+
+
+  //This function adds the animation info about Op Greater operation.
+  async animate_op_greater(animFlag0,speed,param1, param2,row,columnsToBeHighlighted,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("less equal: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    $("#animationTableR"+row).addClass("highlight");
+    if(columnsToBeHighlighted.length == 1){
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+    }else{
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[1]).addClass("highlightCell");
+    }
+
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing: "+param1+ " > "+param2+": ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++;
+    });
+  }
+
+
+
+  //This function enable the execute button which was previously disabled. The execute button remains disable until the animation finishes.
+  async enable_button(animFlag0,speed){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("enabling button: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    document.getElementById("execute").disabled=false;
+    animationFlag++;
+  }
+
+
+  //This function adds the animation info about Op Equal operation.
+  async animate_op_equal(animFlag0,speed,param1, param2,row,columnsToBeHighlighted,node_id){
+    while (animFlag0!=animationFlag){
+      await new Promise(resolve=>setTimeout(function(){
+        console.log("animate op equal: inside while loop",animFlag0, animationFlag);
+			  resolve();
+		    },speed));
+    }
+    
+    $("#animationTableR"+row).addClass("highlight");
+    if(columnsToBeHighlighted.length==1){
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+    }else{
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[0]).addClass("highlightCell");
+      $('#animationTableR'+row+" td").eq(columnsToBeHighlighted[1]).addClass("highlightCell");
+    }
+    console.log("less equal")
+    var index=createAnimationInfoIdentifier();
+    console.log(index);
+    var animateInfo = document.createElement('SPAN');
+    document.getElementById("info").appendChild(animateInfo);
+    animateInfo.setAttribute("id","animationInfo"+index);
+    animateInfo.innerHTML = "Executing: "+param2+ " is Equal to "+param1+": ";
+    document.getElementById("animationInfo"+index).style.fontsize="large";
+    console.log(document.getElementById("animationInfo"+index));
+    console.log(document.getElementById("info"));
+    //animateInfo.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    var target_node = document.getElementById(node_id);
+    target_node.setAttribute("fill","yellow");
+    $("#animationInfo"+index).addClass("animated lightSpeedIn").one('oAnimationEnd mozAnimationEnd webkitAnimationEnd', function(){
+      animationFlag++; 
+    });
+  }
+ 
+}
+
+//Animation code ends here with the end of AnimationExecutor class------------------------------------------------------------------------------------
+
+
+var animationExecutor=new AnimationExecutor();
+var animationInfoIndex=0;
+var callbackArray=[];
+//We can also add Shipping Agency table in our database if we want to make our database large and test more complex queries.
+var cursorIndex =0; //declaring global because of its need inside the function in order to generate cursor name 
+var colIndex =0; //declaring global because of its need inside some function in order to generate column name
+
+
+//This function clears the selected query from query input box.
+function clear_query(){
+  console.log("CLEARING THE QUERY.");
+  document.getElementById("sqlList").value="";  
+}
+
+function toggle_tree(){
+  if(document.getElementById("tree").style.display == "none" ) {
+    document.getElementById("tree").style.display="";
+  }else{
+    document.getElementById("tree").style.display="none";
+  }
+}
+
+function toggle_animation_window(){
+  if(document.getElementById("animation_window").style.display == "none" ) {
+    document.getElementById("animation_window").style.display="";
+  }else{
+    document.getElementById("animation_window").style.display="none";
+  }
+}
+
+
+
+/*This is the main function. Everything happens here.
+ *This function is responsible for calling a function to create execution tree.
+ *This function is reponsible for executing execution tree and creating results
+  *This function is responsible for calling various animation function in order to execute those animaton.
+*/
+function execute(){
+  //This protects from trying to execute empty query.
+  if(document.getElementById('sqlList').value==""){
+    return queryException("Please enter the query first.");
+  }
+  //Disabling an Execute button until the SQL execution and animation finishes.
+  document.getElementById("execute").disabled=true;
+  //Deleting and resetting animation Info.
+  var infoNode = document.getElementById("info");
+  while (infoNode.firstChild) {
+    infoNode.removeChild(infoNode.firstChild);
+  }
+  //Deleting and resetting Execution Tree.
+  var svgtree = document.getElementById("svg_tree");
+  while(svgtree.firstChild){
+    svgtree.removeChild(svgtree.firstChild);
+  }
+  //Deleting and resetting Animation Table.
+  var tbl = document.getElementById("animationTable");
+  if(tbl) tbl.parentNode.removeChild(tbl);
+  //Resetting Error and Result Info.
+  document.getElementById('error').innerHTML = " ";//in order to populate error if any
+  document.getElementById('result').innerHTML=" ";//in order to populate result after calculation
+  sqlfunction(); //It's inside tree.js, creates an execution tree.
+  createTree(); //This creates an execution tree using SVG.
+  var execStack=[];
+  var root = 0;
+  recursiveExecute(root,execStack);//Recursively executing each node in execution tree.
+}
+
+
+/*This function is the heart of the whole program.
+ *Here, each node in execution tree gets executed and passes temporary resul to upper node.
+*/
+function recursiveExecute(root,execStack, data_param,row,tableIndex){
+  //data_param parameter is optional. So, setting it to zero if not provided.
+  if(typeof data_param=="undefined"){data_param=-1;}
+  if(typeof row=="undefined"){row=-1;}
+  if(typeof tableIndex=="undefined"){tableIndex=-1;}
+  //NodeType.ID, NodeType.String and NodeType.Number are leaf nodes. So, we simply push the ID to execStack. execStack is our holder to hold intermidiate result
+  if(newOpArray[root].type_== NodeType.ID){
+    execStack.push([NodeType.ID,newOpArray[root].value_]);
+  }
+  else if(newOpArray[root].type_==NodeType.NUMBER){
+    execStack.push([NodeType.NUMBER, newOpArray[root].value_]);
+  }
+  else if(newOpArray[root].type_==NodeType.STRING){
+    execStack.push([NodeType.STRING, newOpArray[root].value_]);
+  }
+  //Now, climbing up from leaf nodes and executing each node on our way recursively.
+  else{
+    for(var i=0; i<newOpArray[root].children_.length; ++i){
+      recursiveExecute(newOpArray[root].children_[i], execStack, data_param,row,tableIndex);
+    }
+    //This array holds the parameters and temporary results that needs to pass from node to node.
+    var parameters =[];
+
+    if(newOpArray[root].type_==NodeType.ADD){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_ADD(parameters, root, data_param);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.AND){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_AND(parameters, root);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.DIVIDE){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_DIVIDE(parameters, root, data_param);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.EQUAL){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result =op_EQUAL(parameters, root, data_param,row,tableIndex);
+      execStack.push(result);
+    }
+    
+    else if(newOpArray[root].type_==NodeType.GREATER){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_GREATER(parameters, root, data_param,row,tableIndex);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.GREATER_EQUAL){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_GREATER_EQUAL(parameters, root, data_param,row,tableIndex);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.JOIN_CROSS_COMMA){
+      parameters.push(execStack.pop());
+      var result =op_JOIN_CROSS_COMMA(parameters,root);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.JOIN_INNER){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_JOIN_INNER(parameters, root);
+      console.log(result);
+      execStack.push(result);
+    }
+    
+    else if(newOpArray[root].type_==NodeType.LESS){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_LESS(parameters, root, data_param,row,tableIndex);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.LESS_EQAL){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_LESS_EQAL(parameters, root, data_param,row,tableIndex);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.MULTIPLY){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_MULTIPLY(parameters, root, data_param);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.NOOP){
+      parameters.push(execStack.pop());
+      op_NOOP(parameters);
+    }
+
+    else if(newOpArray[root].type_==NodeType.NOT_EQUAL){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_NOT_EQUAL(parameters, root, data_param,row,tableIndex);
+      execStack.push(result);
+
+    }
+    else if(newOpArray[root].type_==NodeType.OR){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_OR(parameters, root);
+      execStack.push(result);
+    }
+    else if(newOpArray[root].type_==NodeType.PROJ){
+      parameters.push(execStack.pop());
+      var result = op_PROJ(parameters, root);
+      console.log(result);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_==NodeType.QUALIFY){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_QUALIFY(parameters, root);
+      execStack.push(result);
+      console.log(result);
+    }
+    else if(newOpArray[root].type_==NodeType.RENAME_TABLE){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_RENAME_TABLE(parameters, root);
+      execStack.push(result);
+      console.log(result);
+    }
+    else if(newOpArray[root].type_==NodeType.SEL){
+      parameters.push(execStack.pop());
+      var result =op_SEL(parameters, root);
+      console.log(result);
+      execStack.push(result);
+    }
+    else if(newOpArray[root].type_==NodeType.SUBTRACT){
+      parameters.push(execStack.pop());
+      parameters.push(execStack.pop());
+      var result = op_SUBTRACT(parameters, root, data_param);
+      execStack.push(result);
+    }
+
+    else if(newOpArray[root].type_== NodeType.TABLE_NAME){
+      parameters.push(execStack.pop());
+      var result =op_TABLE_NAME(parameters, root);
+      execStack.push(result);
+    }
+    //The operation that we don't support will be catched here.
+    else {
+      queryException("We don't know how to process " +newOpArray[root].value_+"with NodeType" +newOpArray[root].type_);
+    }
+  }
+}
+
+
+//Function operation
+
+
+function op_ADD(parameters, root, data_param){
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    animationExecutor.animate_op_add(animationFlag0++,speed,arg1[1],arg2[1],root);
+    return [NodeType.NUMBER, arg1[1] + arg2[1]];
+  }else{
+    queryException("Addition can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+  
+}
+
+
+
+function op_AND(parameters, root){
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  
+  assert((argument1[0] == NodeType.BOOL)&&(argument2[0] == NodeType.BOOL));
+  var selected = argument1[1] && argument2[1];
+  if(selected){
+    //removed animation
+  }else{
+    //removed animation
+  }
+  return [NodeType.BOOL, selected];
+}
+
+
+
+function op_DIVIDE(parameters, root, data_param){
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    animationExecutor.animate_op_divide(animationFlag0++,speed,arg1[1],arg2[1],root);
+    return [NodeType.NUMBER, arg1[1]/arg2[1]];
+  }else{
+    queryException("Division can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+
+
+
+function op_CROSS_PRODUCT(parameters, root){
+  var argument1=parameters[0][1];
+  var argument2=parameters[1][1];
+  //Finding tables/cursor in schema and joining their data.
+  var firstArg = getTableCursorIndex(argument1);
+  var secondArg =getTableCursorIndex(argument2);
+
+  
+  
+  //Creating cursor for cross product and pushing it into schema
+  var cursorName = generateCursorName();
+  var cursorCol = [];
+  for(var m=0; m< schema[firstArg].columns_.length; m++){
+    var t1 = schema[firstArg];
+    //cursorCol.push(new column(t1.columns_[m].colName_, t1.columns_[m].colType_, t1.columns_[m].colWidth_));
+    //The above line is commented out and added a line below and did the same four line below.
+    cursorCol.push(new column(t1.columns_[m].colName_, t1.columns_[m].colType_, t1.columns_[m].colWidth_));    
+  }
+  for(var n=0; n< schema[secondArg].columns_.length; n++){
+    var t2 = schema[secondArg];
+    cursorCol.push(new column(t2.columns_[n].colName_, t2.columns_[n].colType_, t2.columns_[n].colWidth_));    
+  }
+  schema.push(new Table(cursorName, cursorCol));
+  var cursorRecord =[];
+  data.push(cursorRecord);
+  //Creating data for cross product.
+  for(var i=0; i< data[firstArg].length; i++){
+    for(var j=0; j<data[secondArg].length; j++){
+      cursorRecord.push(data[firstArg][i].concat(data[secondArg][j]));
+    }
+  }
+  var thirdArg = getTableCursorIndex(cursorName);
+
+  animationExecutor.animate_op_cursor_name(animationFlag0++,speed,firstArg, secondArg,thirdArg,root);
+  animationExecutor.displayTable(animationFlag0++,speed, thirdArg);
+
+  return [NodeType.CURSOR,cursorName];
+}
+
+
+//This function handles children2 of join and select operation.
+function op_EQUAL(parameters, root, data_param,row,tableIndex){
+  //This function needs the table index in order to get column index. Let's finish this next morning.
+
+  var columnToBeHighlighted=[];
+  for(var i=0; i<parameters.length; i++){
+    if(parameters[i][0]==NodeType.ID){
+      var columnName = getColIndex(tableIndex, parameters[i][1]);
+      columnToBeHighlighted.push(columnName);
+    }
+  }
+  
+  var operand2 = parameters.pop();
+  var operand1 = parameters.pop();
+  var param1= generateOperand(operand1, data_param);
+  var param2= generateOperand(operand2, data_param);
+  assert((param1[0]!=NodeType.UNKNOWN)&&(param2[0]!=NodeType.UNKNOWN));
+
+  //callbackArray.push(function(){return animationExecutor.writingAnimationInfo("Executing EQUAL operation for "+operand1[1]+" and "+operand2[1]+ " on row " +row+".")});
+  animationExecutor.animate_op_equal(animationFlag0++,speed,operand1[1],operand2[1],row,columnToBeHighlighted,root);
+  //checking if they're of same type or not.
+  if(param1[0]==param2[0]){
+    if(param1[1]==param2[1]){
+      //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+      return [NodeType.BOOL, true];
+    }else{
+      //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+      return [NodeType.BOOL, false];
+    }
+  }else{
+    queryException("Equal operator can not be applied between " +operand1[1]+" and "+operand2[1]);
+  }
+
+}
+
+
+function op_GREATER(parameters, root, data_param,row,tableIndex){
+  var columnToBeHighlighted=[];
+  for(var i=0; i<parameters.length; i++){
+    if(parameters[i][0]== NodeType.ID){
+      var columnName = getColIndex(tableIndex, parameters[i][1]);
+      columnToBeHighlighted.push(columnName);
+    }
+  }
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+  animationExecutor.animate_op_greater(animationFlag0++,speed,argument1[1],argument2[1],row,columnToBeHighlighted,root);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    if(arg1[1] > arg2[1]){
+      //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+      return [NodeType.BOOL, true];
+    }else{
+      //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+      return [NodeType.BOOL, false];
+    }
+  }else{
+    queryException("Greater than can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+
+
+function op_GREATER_EQUAL(parameters, root, data_param,row,tableIndex){
+
+  var columnToBeHighlighted=[];
+  for(var i=0; i<parameters.length; i++){
+    if(parameters[i][0]==NodeType.ID){
+      var columnName = getColIndex(tableIndex, parameters[i][1]);
+      columnToBeHighlighted.push(columnName);
+    }
+  }
+
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+  
+  //In order to highlight the specific column under comparison, I've to pass row number.
+  //callbackArray.push(function(){return animationExecutor.animate_op_greater_equal(argument1[1],argument2[1])});
+  animationExecutor.animate_op_greater_equal(animationFlag0++,speed,argument1[1],argument2[1],row,columnToBeHighlighted,root);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    if(arg1[1] >= arg2[1]){
+      //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+      return [NodeType.BOOL, true];
+    }else{
+      //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+      return [NodeType.BOOL, false];
+    }
+  }else{
+    queryException("Greater than or equal can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+  
+
+//We're not doing anything on this function
+function op_JOIN_CROSS_COMMA(parameters, root){
+  animationExecutor.animate_join_cross_comma(animationFlag0++,speed,root);
+  var temp = parameters.pop();
+  if(temp[0]==NodeType.TABLE_NAME){
+    return [NodeType.TABLE_NAME, temp[1]];
+  }
+  if(temp[0]==NodeType.CURSOR){
+    return [NodeType.CURSOR, temp[1]];
+  }
+  
+}
+
+
+ //This function calls op_CROSS_PRODUCT and works on top of it. 
+function op_JOIN_INNER(parameters, root){
+  var joinCol=[];
+  var objectArray=[];
+  //objectArray= createDataParam(parameters);
+  var resultOfCrossProduct =op_CROSS_PRODUCT(parameters, root);
+  var cursorIndex_ = getTableCursorIndex(resultOfCrossProduct[1]);
+
+  
+
+  //callbackArray.push(function(){return createAnimationTable(cursorIndex_)});
+  objectArray = createDataParam(resultOfCrossProduct);
+  var cursorName = generateCursorName();
+  var colCursor=schema[cursorIndex_].columns_;
+  //asserting there is only one children2.
+  assert(newOpArray[root].children2_.length==1);
+  var selectedrow=[];
+  var deletedrow =[];
+  for(var i=0; i< objectArray.length; i++){
+    var tempArray_=[];
+    recursiveExecute(newOpArray[root].children2_[0],tempArray_, objectArray[i],i,cursorIndex_);
+    if(tempArray_[0][1]){
+     animationExecutor.animate_result(animationFlag0++,speed,tempArray_[0][1]);
+     animationExecutor.selectRow(animationFlag0++,speed,i);
+     joinCol.push(data[cursorIndex_][i]);
+    }else{
+      animationExecutor.animate_result(animationFlag0++,speed,tempArray_[0][1]);
+      animationExecutor.deleteRow(animationFlag0++,speed,i);  
+    }
+  }
+  
+  schema.push(new Table(cursorName, colCursor));
+  data.push(joinCol);
+  return [NodeType.CURSOR, cursorName];
+}
+
+
+function op_LESS(parameters, root, data_param,row,tableIndex){
+  var columnToBeHighlighted=[];
+  for(var i=0; i<parameters.length; i++){
+    if(parameters[i][0]==NodeType.ID){
+      var columnName = getColIndex(tableIndex, parameters[i][1]);
+      columnToBeHighlighted.push(columnName);
+    }
+  }
+
+  console.log(parameters);
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+
+  
+
+
+  animationExecutor.animate_op_less(animationFlag0++,speed,argument1[1],argument2[1],row,columnToBeHighlighted,root);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    if(arg1[1] < arg2[1]){
+      //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+      return [NodeType.BOOL, true];
+    }else{
+      //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+      return [NodeType.BOOL, false];
+    }
+  }else{
+    queryException("Less than can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+
+
+function op_LESS_EQAL(parameters, root, data_param,row,tableIndex){
+  var columnToBeHighlighted=[];
+  for(var i=0; i<parameters.length; i++){
+    if(parameters[i][0]==NodeType.ID){
+      var columnName = getColIndex(tableIndex, parameters[i][1]);
+      columnToBeHighlighted.push(columnName);
+    }
+  }
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+
+  
+
+  animationExecutor.animate_op_less_equal(animationFlag0++,speed,argument1[1],argument2[1],row,columnToBeHighlighted,root);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    if(arg1[1] <= arg2[1]){
+      //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+      return [NodeType.BOOL, true];
+    }else{
+      //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+      return [NodeType.BOOL, false];
+    }
+  }else{
+    queryException("Less than or equal can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+
+function op_MULTIPLY(parameters, root, data_param){
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    animationExecutor.animate_op_multiply(animationFlag0++,speed,arg1[1],arg2[1],root);
+    return [NodeType.NUMBER, arg1[1]*arg2[1]];
+  }else{
+    queryException("Multiplication can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+
+
+
+//This function display the result of execution.
+function op_NOOP(parameters){
+  console.log(parameters);
+  var resultIndex=getTableCursorIndex(parameters[0][1]);
+  //Just removing result display until the animation is done. Commented the below line
+  document.getElementById("result").innerHTML=  JSON.stringify(data[resultIndex]);
+  //Creating the result table
+  /*
+  var tblResult= document.getElementById("resultTable");
+  if(tblResult) tbl.parentNode.removeChild(tblResult);
+  var r = document.createElement("TABLE");
+  r.setAttribute("id", "resultTable");
+  //Just removing result display until the animation is done. Commented the below line
+  //document.getElementById("result").appendChild(r);
+  var caption = document.getElementById("resultTable").createCaption();
+  caption.innerHTML ="<b>Result</b>";
+  var p= document.createElement("TR");
+  document.getElementById("resultTable").appendChild(p);
+  p.setAttribute("id","myTrResult");
+  for(var i=0; i< schema[resultIndex].columns_.length; i++){
+    var m= document.createElement("TD");
+    var n= document.createTextNode(schema[resultIndex].columns_[i].colName_);
+    document.getElementById("myTrResult").appendChild(m);
+    m.appendChild(n);
+  }
+  for(var i=0; i< data[resultIndex].length; i++){
+    var s = document.createElement("TR");
+    s.setAttribute("id", "myTrResult"+i);
+    document.getElementById("resultTable").appendChild(s);
+    for(var j=0; j< data[resultIndex][i].length; j++){
+      var u= document.createElement("TD");
+      var v= document.createTextNode(JSON.stringify(data[resultIndex][i][j]));
+      u.appendChild(v);
+      document.getElementById("myTrResult"+i).appendChild(u);
+    }
+  
+  }
+  */
+  animationExecutor.enable_button(animationFlag0++,speed);
+
+}
+
+
+function op_NOT_EQUAL(parameters, root, data_param,row,tableIndex){
+  var columnToBeHighlighted=[];
+  for(var i=0; i<parameters.length; i++){
+    if(parameters[i][0]==NodeType.ID){
+      var columnName = getColIndex(tableIndex, parameters[i][1]);
+      columnToBeHighlighted.push(columnName);
+    }
+  }
+  var operand2 = parameters.pop();
+  var operand1 = parameters.pop();
+  var param1= generateOperand(operand1, data_param);
+  var param2= generateOperand(operand2, data_param);
+  animationExecutor.animate_op_not_equal(animationFlag0++,speed,operand1[1],operand2[1],row,columnToBeHighlighted,root);
+
+  assert((param1[0]!=NodeType.UNKNOWN)&&(param2[0]!=NodeType.UNKNOWN));
+  //checking if they're of same type or not.
+  if(param1[0]==param2[0]){
+    if(param1[1]!=param2[1]){
+      //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+      return [NodeType.BOOL, true];
+    }else{
+      //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+      return [NodeType.BOOL, false];
+    }
+  }else{
+    queryException("Not Equal operator can not be applied between " +operand1[1]+" and "+operand2[1]);
+  }
+
+}
+
+
+function op_OR(parameters, root){
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+
+  //callbackArray.push(function(){return animationExecutor.writingAnimationInfo("Executing OR operation on row " +row+".")});
+
+
+  assert((argument1[0] == NodeType.BOOL)&&(argument2[0] == NodeType.BOOL));
+  var selected =  argument1[1] || argument2[1];
+  if(selected){
+    //callbackArray.push(function(){ return animationExecutor.selectingRow(row)});
+  }else{
+    //callbackArray.push(function(){ return animationExecutor.deletingRow(row)});
+  }
+  return [NodeType.BOOL,selected];
+}
+
+
+//There are two cases: with children2 and without children2
+function op_PROJ(parameters, root){
+  /*
+  Implement ambiguity check for op_proj when the proj operator has no element in children2_.
+  For all ambiguity check, given a colname, we may have
+  1.Its format is simply col_name, then if this appears more than once in the record object 
+  (no matter in the format of col_name itself or cursor_name.col_name), then it is ambiguous. 
+  2.Its format is cursor_name.col_name, then we want only one exact match.
+  We will do this even for select *
+  A caveat is that, for nested queries, the cursor_name.col_name may be carried into the outer
+  query so that ambiguity issues may not be reported.  In the futre, when we want to support nested 
+  query, we will manually insert a new operator called FORGET_CURSORNAME_NAME when the parser tree 
+  exist a query block.  What the operator does is to remove all “cursor_name.” from the columns from 
+  the input cursor.
+  */
+  var param=[];
+  param.push(parameters.pop());
+  console.log("PARAM AT PROJ OP",param);
+  var index = getTableCursorIndex(param[0][1]);
+  
+  var cursorName = generateCursorName();
+  var colCursor=[];
+  const UNSPECIFIED_COLUMN_WIDTH = null;
+  //Check if duplicate column name exist in the table. We need to check even for (select *). So, checking here.
+  if(doesDuplicateColumnNameExist(schema[index].column_)){
+    queryException("Duplicate column name exist in the table "+schema[index].tabName_+".");
+  }
+  //Creating schema
+  if(newOpArray[root].children2_.length==0){
+    colCursor = schema[index].columns_;
+    
+    schema.push(new Table(cursorName, colCursor));
+    data.push(data[index]);
+    return [NodeType.CURSOR, cursorName];  
+  }else{
+    animationExecutor.animate_op_proj(animationFlag0++,speed,root);
+    animationExecutor.displayTable(animationFlag0++,speed,index);
+    for(var j=0; j<newOpArray[root].children2_.length; j++){
+      var nodeIndex = newOpArray[root].children2_[j];
+      var finalColumnName, finalColumnType, finalColumnWidth;
+      var aliasOrQualifierPresent = false;
+      //First we check for RENAME operator and organize the tree.
+      if(newOpArray[nodeIndex].type_== NodeType.RENAME_ATTRIBUTE){
+        assert(newOpArray[nodeIndex].children_.length == 2);
+        aliasOrQualifierPresent = true;
+        finalColumnName = newOpArray[newOpArray[nodeIndex].children_[1]].value_;
+        if(finalColumnName.includes(".")){
+          queryException("Syntax error:'.' is not allowed in renamed column name.");
+        }
+
+        
+        
+        animationExecutor.animate_op_rename_col(animationFlag0++,speed,newOpArray[newOpArray[nodeIndex].children_[0]].value_,newOpArray[newOpArray[nodeIndex].children_[1]].value_,nodeIndex);
+        
+        //Organizing the tree by eliminating RENAME operator.
+        newOpArray[root].children2_[j]= newOpArray[newOpArray[root].children2_[j]].children_[0];
+        newOpArray[newOpArray[nodeIndex].children_[0]].parent_= root;
+        nodeIndex = newOpArray[root].children2_[j];
+        console.log(nodeIndex);
+      }else if(newOpArray[nodeIndex].type_==NodeType.QUALIFY){
+        assert(newOpArray[nodeIndex].children_.length==2);
+        aliasOrQualifierPresent = true; //not an alias but a qualifier
+        finalColumnName = newOpArray[newOpArray[nodeIndex].children_[1]].value_;
+        var colIndex_ = getColIndex(index, finalColumnName);
+        //I don't know if I want to call following function or not.
+        // animationExecutor.animate_op_qualify(animationFlag0++,speed,newOpArray[newOpArray[nodeIndex].children_[0]].value_,newOpArray[newOpArray[nodeIndex].children_[1]].value_,nodeIndex);
+        // animationExecutor.animate_selecting_col(animationFlag0++,speed,colIndex_,finalColumnName); 
+      }
+      //If it is a single node, ID type.
+      if(newOpArray[nodeIndex].type_==NodeType.ID){
+        assert(newOpArray[nodeIndex].children_.length==0);
+        console.log(newOpArray[nodeIndex]);
+        var columnName = newOpArray[nodeIndex].value_;
+	      console.log(columnName);
+        var colIndex_ = getColIndex(index, columnName);
+        if(!aliasOrQualifierPresent){
+          finalColumnName = columnName;
+        }
+        finalColumnType = schema[index].columns_[colIndex_].colType_;
+        finalColumnWidth = schema[index].columns_[colIndex_].colWidth_; 
+        animationExecutor.animate_selecting_col(animationFlag0++,speed,colIndex_,columnName); 
+      }
+      //Single node with no children and type is either NUMBER or STRING
+      else if((newOpArray[nodeIndex].type_==NodeType.NUMBER) || (newOpArray[nodeIndex].type_==NodeType.STRING)){
+        assert(newOpArray[nodeIndex].children_.length==0);
+        if(!aliasOrQualifierPresent){
+          finalColumnName = generateColName();
+        }
+        finalColumnType = newOpArray[nodeIndex].type_;
+        finalColumnWidth = UNSPECIFIED_COLUMN_WIDTH;
+        animationExecutor.animate_adding_col(animationFlag0++,speed,finalColumnName,newOpArray[nodeIndex].value_)
+      }
+      //For multinode tree with no RENAME operator
+      else{
+        assert((newOpArray[nodeIndex].type_!= NodeType.RENAME_ATTRIBUTE) &&(newOpArray[nodeIndex].children_.length!=0));
+        if(!aliasOrQualifierPresent){
+          finalColumnName = generateColName();
+        }
+        finalColumnType = NodeType.UNKNOWN;
+        finalColumnWidth = UNSPECIFIED_COLUMN_WIDTH;
+      }
+      // assert((!finalColumnName.includes('.')));
+      // finalColumnName =cursorName+"."+finalColumnName;
+      //We're not going to use cursorName.columnName here because it is not user provided cursor.
+      //Therefore, we simply do finalcolumnName = finalColumnName or finalColumnName remains the same.
+      //Another columnName may not have "." if rename or qualify exist.
+      colCursor.push(new column(finalColumnName, finalColumnType, finalColumnWidth));
+    }
+    schema.push(new Table(cursorName, colCursor));
+    var lastIndex = schema.length -1;
+    if(doesDuplicateColumnNameExist(schema[lastIndex].column_)){
+      queryException("Duplicate column name exist in the table "+schema[lastIndex].tabName_+".");
+    }
+  }
+  console.log(schema);
+  //Creating data for the schema.
+  var dataRecord =[];
+  var holder =[];
+  holder.push(param[0][0]);
+  holder.push(param[0][1]);
+  var objectData = createDataParam(holder);
+  console.log("OBJECT DATA IN PROJ OPERATION",objectData);
+  for(var i=0; i<objectData.length; i++){
+    var record =[];
+    for(var j=0; j< newOpArray[root].children2_.length; j++){
+      var nodeIndex = newOpArray[root].children2_[j];
+      if(newOpArray[nodeIndex].type_==NodeType.ID){
+	      var columnName = newOpArray[nodeIndex].value_;
+        var colIndex_ = getColIndex(index, columnName);
+	      var argumentList=Object.getOwnPropertyNames(objectData[i]);
+        console.log(columnName);
+        record.push(objectData[i][argumentList[colIndex_]]);
+        
+      }else if((newOpArray[nodeIndex].type_==NodeType.STRING) || (newOpArray[nodeIndex].type_==NodeType.NUMBER)){
+        record.push(newOpArray[nodeIndex].value_);
+      }else if(newOpArray[nodeIndex].type_==NodeType.QUALIFY){
+        var resultStack=[];
+        recursiveExecute(newOpArray[root].children2_[j],resultStack);
+	      var columnName = resultStack[0][1];
+	      var colIndex_ = getColIndex(index, columnName);
+        //animationExecutor.animate_op_qualify(animationFlag0++,speed,newOpArray[newOpArray[nodeIndex].children_[0]].value_,newOpArray[newOpArray[nodeIndex].children_[1]].value_,nodeIndex);
+        animationExecutor.animate_selecting_col(animationFlag0++,speed,colIndex_,columnName); 
+	      var argumentList=Object.getOwnPropertyNames(objectData[i]);
+        record.push(objectData[i][argumentList[colIndex_]]);
+      
+      //Writing back type 
+        if(i==0){
+          var type = typeof objectData[i][argumentList[colIndex_]];
+          var lastSchemaIndex = schema.length -1;
+          console.log(index);
+          console.log(j);
+          console.log(type);
+          assert(schema[lastSchemaIndex].columns_[j].colType_==NodeType.UNKNOWN);
+          if(type=='number'){
+            schema[lastSchemaIndex].columns_[j].colType_=NodeType.NUMBER;
+          }else if(type=='string'){
+            schema[lastSchemaIndex].columns_[j].colType_=NodeType.STRING;
+          }
+        }
+      }
+      //For add, multiply, subtract, divide
+      //else if((( (newOpArray[nodeIndex].type_==NodeType.ADD) || (newOpArray[nodeIndex].type_==NodeType.MULTIPLY))
+      //        || (newOpArray[nodeIndex].type_==NodeType.SUBTRACT)) || (newOpArray[nodeIndex].type_==NodeType.DIVIDE)){
+      else{
+	      var resultStack=[];
+	      recursiveExecute(newOpArray[root].children2_[j], resultStack,objectData[i]);
+	      record.push(resultStack[0][1]);
+        var lastSchemaIndex = schema.length -1;
+
+        console.log("LOGGING TABLE NAME SELECTED",schema[lastSchemaIndex].columns_[j].colName_);
+        animationExecutor.animate_adding_cell(animationFlag0++,speed,resultStack[0][1],i,schema[lastSchemaIndex].columns_[j].colName_,objectData.length);
+
+        if(i==0){
+          var lastSchemaIndex = schema.length -1;
+          var type = typeof resultStack[0][1];
+          console.log(index);
+          console.log(j);
+          console.log(type);
+          assert(schema[lastSchemaIndex].columns_[j].colType_== NodeType.UNKNOWN);
+          if(type =='number'){
+            schema[lastSchemaIndex].columns_[j].colType_=NodeType.NUMBER;
+          }else if(type=='string'){
+            schema[lastSchemaIndex].columns_[j].colType_=NodeType.STRING;
+          }
+        }
+      }      
+    }
+    console.log(record);
+    dataRecord.push(record);
+  }
+  data.push(dataRecord);
+  console.log(schema);
+  console.log(data);
+  return [NodeType.CURSOR,cursorName];
+}	
+
+
+
+//This function concatenate two IDs to solve qualifiers
+function op_QUALIFY(parameters, root){
+  var op1 = parameters.pop();
+  var op2 = parameters.pop();
+  animationExecutor.animate_op_qualify(animationFlag0++,speed,op1[1],op2[1],root);
+  return [NodeType.ID, op1[1]+"."+op2[1]];
+}
+
+
+function op_RENAME_TABLE(parameters, root){
+  var op1 = parameters.pop();
+  var op2 = parameters.pop();
+  assert((op1[0]==NodeType.TABLE_NAME) || (op1[0]== NodeType.CURSOR));
+  assert(op2[0]==NodeType.ID)
+  var index = getTableCursorIndex(op1[1]);
+
+  var cursorName = op2[1];
+  var doesTableExist = doesTableNameExist(cursorName);
+  if(doesTableExist){
+    queryException('The table name '+cursorName+' already exist in the database.');
+  }
+  var colCursor=[];
+  for(var i=0; i< schema[index].columns_.length; i++){
+    var columnName = schema[index].columns_[i].colName_;
+    if(op1[0]==NodeType.TABLE_NAME){
+      assert(columnName.includes('.'));
+      columnName = cursorName+"."+columnName.slice(columnName.indexOf(".")+1, );
+      colCursor.push(new column(columnName, schema[index].columns_[i].colType_, schema[index].columns_[i].colWidth_));
+    }
+    //It is same as if(op1[0]==NodeType.CURSOR)
+    else{
+      assert(!columnName.includes('.'));
+      columnName = cursorName+"."+columnName;
+      colCursor.push(new column(columnName, schema[index].columns_[i].colType_, schema[index].columns_[i].colWidth_));
+    }    
+  }
+  animationExecutor.animate_op_rename_table(animationFlag0++,speed,index,cursorName,root);
+  schema.push(new Table(cursorName, colCursor));
+  data.push(data[index]);
+  //We're assuming user defined cursor as table names.
+  return [NodeType.TABLE_NAME, cursorName];
+
+}
+//There are two cases: with children2 and without children2.
+function op_SEL(parameters, root){
+  var selectResult=[];
+  var currentData= parameters.pop();
+  assert(newOpArray[root].children2_.length>0);
+  var selectedData =[];
+  var index =getTableCursorIndex(currentData[1]);
+  var cursorName = generateCursorName();
+  var colCursor=[];
+  
+  for(var i=0; i< schema[index].columns_.length; i++){
+    var columnName = schema[index].columns_[i].colName_;
+    //The column should have "." in it. It won't have "." it it only if it is renamed column name which is not
+    //likely to be here.
+    assert(columnName.includes('.'));
+    // if(!columnName.includes('.')){
+    // 	columnName = schema[index].tabName_+"."+columnName;
+    // }
+      colCursor.push(new column(columnName, schema[index].columns_[i].colType_, schema[index].columns_[i].colWidth_))  ;    
+  }
+  console.log(colCursor);
+  //The below line is commented and repalced by above lines by creating column Name incuding table name.
+  //var colCursor=schema[index].columns_;
+
+
+  var objectArray=[];
+  objectArray= createDataParam(currentData);
+  assert(newOpArray[root].children2_.length==1);
+  
+  var selectedrow=[];
+  var deletedrow =[];
+  console.log(objectArray);
+  animationExecutor.animate_op_sel(animationFlag0++,speed,root);
+  animationExecutor.displayTable(animationFlag0++,speed,index);
+  for(var l=0; l< objectArray.length; l++){
+    var tempArray_=[];
+    recursiveExecute(newOpArray[root].children2_[0],tempArray_, objectArray[l],l,index);
+    if(tempArray_[0][1]){
+      selectedData.push(data[index][l]);
+      //calling animation from loop is messing up the order.
+      animationExecutor.animate_result(animationFlag0++,speed,tempArray_[0][1]);
+      animationExecutor.selectRow(animationFlag0++,speed,l);
+    }else{
+      animationExecutor.animate_result(animationFlag0++,speed,tempArray_[0][1]);
+      animationExecutor.deleteRow(animationFlag0++,speed,l);
+    }
+  }
+
+  
+  schema.push(new Table(cursorName, colCursor));
+  data.push(selectedData);
+  return [NodeType.CURSOR, cursorName];
+
+}
+
+
+function op_SUBTRACT(parameters, root, data_param){
+  var argument1 = parameters.pop();
+  var argument2 = parameters.pop();
+  var arg1 = generateOperand(argument1, data_param);
+  var arg2 = generateOperand(argument2, data_param);
+  if((arg1[0]=='number')&&(arg2[0]=='number')){
+    animationExecutor.animate_op_subtract(animationFlag0++,speed,arg1[1],arg2[1],root);
+    return [NodeType.NUMBER, arg1[1] - arg2[1]];
+    
+  }else{
+    queryException("Subtraction can not be applied between "+argument1[1]+" and "+argument2[1]);
+  }
+}
+
+
+
+function op_TABLE_NAME(parameters, root){
+  console.log('SPEED',speed);
+  var table = parameters.pop();
+  var tableIndex =getTableCursorIndex(table[1]);
+  animationExecutor.animate_op_table_name(animationFlag0++,speed,tableIndex,root);
+  animationExecutor.displayTable(animationFlag0++,speed,tableIndex);
+
+  
+  
+  return [NodeType.TABLE_NAME, table[1]];
+  // var table = parameters.pop();
+  // var index = getTableCursorIndex(table[1]);
+  // var cursorName = generateCursorName();
+  // var colCursor = schema[index].columns_;
+  // schema.push(new Table(cursorName, colCursor));
+  // data.push(data[index]);
+  // return[NodeType.CURSOR, cursorName];
+}
+
+//----------------------------------HELPER FUNCTION-----------------------------------------//
+
+
+
+
+//Function that assert that the provided condition is true. If condtion is not true,
+//throw an error message.
+function assert(condition, message){
+  if(!condition){
+    message = message || "Assertion failed";
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+  }
+}
+
+function createAnimationInfoIdentifier(){
+  animationInfoIndex++;
+  return animationInfoIndex;
+}
+
+
+//This function generates the object array given the table. This function does not need to handle 
+//two tables anymore but I left the the code in here with comment for future reference.
+function createDataParam(parameters){
+  // console.log(parameters);
+  // //In case of Join operation
+  // if(parameters[0].length==2){
+  //   var argument1= parameters[0][1];
+  //   var argument2= parameters[1][1];
+  //   //Finding tables in schema and joining their data.
+  //   var firstTableIndex = getTableCursorIndex(argument1);
+  //   var secondTableIndex= getTableCursorIndex(argument2);
+  //   //Creating a cursor joining two tables
+  //   var cursor=[];
+  //   for(var k=0; k<data[firstTableIndex].length; k++){
+  //     var record1={};
+  //     for(var i=0; i< schema[firstTableIndex].columns_.length; i++){
+  //       var columnName= schema[firstTableIndex].columns_[i].colName_.toUpperCase();
+  //       var attribute;
+  //       //If column name already contains '.'. That means it already has table name in it. 
+  //       if(columnName.includes(".")){
+	//         attribute = columnName;
+	//       }else{
+  //         attribute=argument1+"."+columnName;
+	//       }
+  //       var currentRecord1={[attribute]:data[firstTableIndex][k][i]};
+  //       record1=Object.assign(record1,currentRecord1);
+  //     }
+  //     for(var j=0; j<data[secondTableIndex].length; j++){
+  //       var record2={};
+  //       for(var m=0; m< schema[secondTableIndex].columns_.length; m++){
+  //         var columnName=schema[secondTableIndex].columns_[m].colName_.toUpperCase();
+	//         var attribute;
+  //         //If column name already contains '.'. That means it already has table name in it. 
+	//         if(columnName.includes(".")){
+	//         attribute = columnName;
+	//         }else{
+  //           attribute=argument2+"."+columnName;
+	//         }
+  //         var currentRecord2={[attribute]:data[secondTableIndex][j][m]};
+  //         record2= Object.assign(record2, currentRecord2);
+  //       }
+  //       var record=Object.assign({},record1,record2);
+  //       cursor.push(record);
+  //     }
+  //   }
+  //   return cursor;
+  // }
+  // else{
+    //In case of Select operation, creating object array with single table or schema
+    console.log(parameters);
+    var argument1= parameters[1];
+    
+    var firstTableIndex=getTableCursorIndex(argument1);
+    var cursor=[];
+    console.log(firstTableIndex);
+    for(var k=0; k< data[firstTableIndex].length; k++){
+      var record1={};
+      for(var i=0; i< schema[firstTableIndex].columns_.length; i++){
+        var columnName= schema[firstTableIndex].columns_[i].colName_.toUpperCase();
+        var attribute;
+        //Column name should have "." in it. It won't have "." only if it is renamed column name which is 
+        //not likely to be here.
+        assert(columnName.includes("."));
+        attribute = columnName;
+        // if(columnName.includes(".")){
+        //   attribute = columnName;
+        // }else{
+        //   attribute=argument1+"."+columnName;
+        // }
+        var currentRecord1={[attribute]:data[firstTableIndex][k][i]};
+        record1=Object.assign(record1,currentRecord1);
+      }
+      cursor.push(record1);
+    }
+    return cursor;
+}
+
+
+
+//This function generates the argumentList with taking out table names.
+function generateArgumentWOTableName(argumentList){
+  var list=[];
+  for(var i=0; i< argumentList.length; i++){
+    var arg= argumentList[i].slice(argumentList[i].indexOf(".")+1,);
+    list.push(arg);
+  }
+  return list;
+}
+
+
+function getColIndex(index, columnName){
+  var counter =0;
+  var columnIndex;
+  for(var k=0; k<schema[index].columns_.length; k++){
+    var columnName_ =schema[index].columns_[k].colName_.toUpperCase();
+    console.log(columnName_);
+    console.log(columnName);
+    if(columnName.includes(".") && columnName_.includes(".")){
+      if(columnName==columnName_){
+        columnIndex =k;
+	counter++;
+      }
+    }
+    if(columnName.includes(".") &&(!(columnName_.includes(".")))){
+      var colName = columnName.slice(columnName.indexOf(".")+1,)
+      if(colName==columnName_){
+        columnIndex =k;
+	counter++;
+      }
+    }
+    if(((!columnName.includes("."))) && columnName_.includes(".")){
+      var colName_= columnName_.slice(columnName_.indexOf(".")+1,)
+      if(columnName==colName_){
+        columnIndex =k;
+	counter++;
+      }
+    }
+    if((!columnName.includes('.')) && (!columnName_.includes('.'))){
+      if(columnName==columnName_){
+        columnIndex =k;
+	counter++;
+      }
+    }
+  }
+  if(counter >1){
+    queryException(columnName+" "+"is ambiguous.");
+  }else if(counter == 0){
+    queryException(columnName+" "+"not found.");
+  }else{
+    return columnIndex;
+  }     
+}
+
+
+
+//This function generates the column name.
+function generateColName(){
+  colIndex++;
+  return ("Col"+colIndex);
+}
+
+
+//This function generates the cursor name.
+function generateCursorName(){
+  cursorIndex++;
+  return("C"+cursorIndex);
+}
+
+
+
+//This function generates parameters for OP_EQUAL function.
+function generateOperand(operand, data_param){
+  var param;
+  var index;
+  var argumentList=Object.getOwnPropertyNames(data_param);
+  var argumentWO = generateArgumentWOTableName(argumentList);
+  //Operand: checking error and getting data
+  if(operand[0]==NodeType.ID){
+    var counter=0;
+    if(operand[1].includes(".")){
+      for(var i=0; i< argumentList.length; i++){
+        if(operand[1]==argumentList[i]){
+          counter ++;
+          index = i;
+        }
+      }
+    }
+    else{
+      for(var i=0; i< argumentWO.length; i++){
+        if(operand[1]==argumentWO[i]){
+          counter ++;
+          index = i;
+        }
+      }
+    }
+    if(counter==0){
+      queryException(operand[1]+" "+"not found.");
+    }else if(counter >1){
+      queryException(operand[1]+ " "+"appeared more than once.");
+    }else{
+      param=data_param[argumentList[index]];
+    }
+  }else{
+    param=operand[1];
+  }
+  return [typeof param, param,index];
+}
+
+
+
+
+//This function returns the index of data given the name 
+//of table or cursor
+function getTableCursorIndex(name){
+  var counter=0;
+  var tableIndex;
+  for( var k=0; k<schema.length; k++){
+    if(schema[k].tabName_.toUpperCase()==name){
+      counter++;
+      tableIndex=k;
+    }
+  }
+  if(counter==0){
+    queryException(name +" "+"not found in schema");
+  }else{
+    return tableIndex;
+  }
+}
+
+//This function returns an array of schema with the same table name
+//as provided table name if there is any. Otherwise return undefined(false).
+function doesTableNameExist(tableName){
+  return schema.find(function(schemaA){
+    return (schemaA.tabName_.toUpperCase()==tableName.toUpperCase());
+  });
+}
+//This function check if duplicate column name exist in the provided colCursor and rturns true if duplicates exist 
+//otherwise returns false.
+function doesDuplicateColumnNameExist(colCursor){
+  
+  //Asserting that all the columns in the colCursor has column name with "."
+  //in it. Because we should have "." in them. There won't be dot in renamed columnName.
+  //Becaude it keeps saying colCorsor is undefined.
+  if(colCursor){
+    //Commenting out because there won't be dot in renamed column name.
+    // assert(colCursor.every(function(column){
+    // return column.colName_.includes(".");
+    // }));
+    console.log('typeOfColCUrosr', typeof colCursor);
+    var arrayOfTableOrCursorNames =[];
+    for(var i=0; i< colCursor.lenght; i++){
+      arrayOfTableOrCursorNames.push(colCursor[i].colName_);
+    }
+    return arrayOfTableOrCursorNames.some(function(columnName, columnIndex,arrayOfTableOrCursorNames){
+      return arrayOfTableOrCursorNames.indexOf(columnName, columnIndex+1) !=-1;
+    });
+  }
+  
+}
+
+
+
+
+function queryException(message){
+  document.getElementById('error').innerHTML = 'Error:'+' '+message;
+  if(typeof Error !=="undefined"){
+    throw new Error(message);
+  }
+  throw message;
+}
+
+function readable_nodetype(num){
+  var nodetype;
+  Object.getOwnPropertyNames(NodeType).forEach(
+    function(val,idx,array){
+      if(NodeType[val]==num){
+        console.log("NODETYPE",val);
+        nodetype= val;
+      }
+  });
+  return nodetype;
+}
+
+//Work on this function, the nodes are overlapping whenever there are two childrens
+function createTree(){
+    //Tree using CANVAS is commented out; Currently using SVG for tree because it's better.
+    /*
+    //My CODE:
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    ctx.fillStyle="white";
+    ctx.fillRect(0,0,c.width,c.height);
+    var x=250;
+    var y=40;
+    var r=25;
+    var root=0;
+    createTreeRecursive(ctx,x,y,r,root);
+    function createTreeRecursive(ctx,x,y,r,root){
+      ctx.moveTo(x,y);
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,2*Math.PI);
+      ctx.fillStyle="green";
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.closePath();
+      ctx.strokeText(newOpArray[root].type_+" , "+newOpArray[root].value_,x,y);
+      if(newOpArray[root].children2_.length!=0){
+        for(var i=0;i<newOpArray[root].children2_.length;i++){
+          ctx.moveTo(x+r,y);//was (x+r,y)before.
+          ctx.lineTo(x+(10*r*(i+1)),y);
+          ctx.stroke();
+          createTreeRecursive(ctx,x+(10*r)*(i+1),y,r,newOpArray[root].children2_[i]);
+          
+        }
+        // ctx.moveTo(x+r,y);
+        // ctx.lineTo(x+(9*r),y);
+        // ctx.stroke();
+        // createTreeRecursive(ctx,x+(10*r),y,r,newOpArray[root].children2_[0]);
+
+      }
+      if(newOpArray[root].children_.length==2){
+        ctx.moveTo(x,y+r);
+        ctx.lineTo(x-(3*r),y+(2*r));
+        ctx.stroke();
+        ctx.moveTo(x,y+r);
+        ctx.lineTo(x+(3*r),y+(2*r));
+        ctx.stroke();
+        createTreeRecursive(ctx,x-(3*r),y+(3*r),r,newOpArray[root].children_[0]);
+        createTreeRecursive(ctx,x+(3*r),y+(3*r),r,newOpArray[root].children_[1]);
+
+      }else if(newOpArray[root].children_.length==1){
+        ctx.moveTo(x,y+r);
+        ctx.lineTo(x,y+(2*r));
+        ctx.stroke();
+        createTreeRecursive(ctx,x,y+(3*r),r,newOpArray[root].children_[0]);
+
+      }
+      
+
+
+    }
+    */
+    //Creating a tree with SVG.
+    var container =document.getElementById("svg_tree");
+    var tree_container = document.getElementById("tree");
+    var a=200;
+    var b=40;
+    var r1=16;
+    var root1=0;
+    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    var avoid_overlap = 1.0;
+    var longest_children_branch;
+    var longest_children2_branch;
+    var height = 0;
+    var width = 0;
+    for(var i = 0;i<newOpArray.length;i++){
+      if(newOpArray[i].children2_.length>width){
+        width = newOpArray[i].children2_.length;
+      }
+    }
+    findMaxHeight(0);
+    container.setAttribute("height",height*r1*7);
+    container.setAttribute("width",(width+1)*(r1+1)*40);
+    
+    tree_container.setAttribute("width",((width+1)*r1*40)-1)
+    createSVGtree(a,b,r1,root1,avoid_overlap);
+
+    function findMaxHeight(node){
+      if(newOpArray[node].children_.length != 0){
+        height++;
+        findMaxHeight(newOpArray[node].children_[0]);
+      }
+    }
+    
+    
+    function createSVGtree(a,b,r1,root1,avoid_overlap){
+      if(avoid_overlap==undefined){
+	      avoid_overlap=1.0;
+      }
+      var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx",a);
+      circle.setAttribute("cy",b);
+      circle.setAttribute("r",r1);
+      circle.setAttribute('id',root1);
+      circle.setAttribute("fill","green");
+      container.appendChild(circle);
+      var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x",a);
+      text.setAttribute("y",b);
+      text.setAttribute("class","small_text");
+      text.setAttribute("fill","black");
+      var nodetype = readable_nodetype(newOpArray[root1].type_);
+      console.log(nodetype);
+      if((newOpArray[root1].value_==undefined)||(newOpArray[root1].value_=='')){
+        text.innerHTML =nodetype;
+      }else{
+        
+        text.innerHTML =nodetype+" , "+newOpArray[root1].value_;
+      }
+      
+      container.appendChild(text);
+      if(newOpArray[root1].children2_.length!=0){
+        for(var j=0;j<newOpArray[root1].children2_.length;j++){
+          var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1",a+r1);
+          line.setAttribute("y1",b);
+          line.setAttribute("x2",a+(24*r1*(j+1)));
+          line.setAttribute("y2",b);
+          line.style="stroke:rgb(255,0,0);stroke-width:2";
+          container.appendChild(line);
+          createSVGtree(a+(24*r1)*(j+1),b,r1,newOpArray[root1].children2_[j]);
+          
+        }
+      }
+      if(newOpArray[root1].children_.length == 1){
+      	var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      	line.setAttribute("x1",a);
+      	line.setAttribute("y1",b+r1);
+      	line.setAttribute("x2",a);
+      	line.setAttribute("y2",b+(5*r1));
+      	line.style="stroke:rgb(255,0,0);stroke-width:2";
+      	container.appendChild(line);
+	createSVGtree(a,b+(6*r1),r1,newOpArray[root1].children_[0]);
+      }else if(newOpArray[root1].children_.length==2){
+        
+	var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      	line.setAttribute("x1",a);
+        line.setAttribute("y1",b+r1);
+      	line.setAttribute("x2",a-((6*r1)*avoid_overlap)); //line.setAttribute("x2",a-(5*r1)); 
+      	line.setAttribute("y2",b+(3*r1));
+      	line.style="stroke:rgb(255,0,0);stroke-width:2";
+      	container.appendChild(line);
+	var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      	line.setAttribute("x1",a);
+        line.setAttribute("y1",b+r1);
+      	line.setAttribute("x2",a+((6*r1)*avoid_overlap));//line.setAttribute("x2",a+(5*r1));
+      	line.setAttribute("y2",b+(3*r1));
+      	line.style="stroke:rgb(255,0,0);stroke-width:2";
+      	container.appendChild(line);
+        
+        createSVGtree(a-((6*r1)*avoid_overlap),b+(4*r1),r1,newOpArray[root1].children_[0],avoid_overlap-0.3);
+        createSVGtree((a+((6*r1))*avoid_overlap),b+(4*r1),r1,newOpArray[root1].children_[1],avoid_overlap-0.3);
+
+
+      }
+
+    }   
+}
+
+
+</script>
+<!-- Optional JavaScript, JQuery first, then Popper.js, then Bootstrap JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+ 
+</body>
+
+</html>
