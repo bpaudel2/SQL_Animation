@@ -38,4 +38,5 @@ antlr4 -Dlanguage=JavaScript PlSqlParser.g4
 ```
 The one last thing:
 * We are able to use require() in your client side JavaScript because of the require.js file inside lib folder. You can also find the same file [here](https://gist.github.com/wesleyduff/e229a7376e0c32261ee5). For more informaion about using require() in client side JavaScript, check out [this](https://stackoverflow.com/questions/19059580/client-on-node-uncaught-referenceerror-require-is-not-defined) stackoverflow thread.
+
 Now, you can open index.html file in your browser to run your app. 
