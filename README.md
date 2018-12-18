@@ -31,4 +31,11 @@ java org.antlr.v4.Tool %*
 java org.antlr.v4.gui.TestRig %*
 // put them in the system PATH or any of the directories included in your PATH
 ```
-Now, you can use antlr4 command in your terminal or command line in order to generate Parser using your grammer. PlSqlLexer.g4 and PlSqlParser.g4 are grammar in our case. We borrowed these grammar form [here](https://github.com/antlr/grammars-v4/tree/master/plsql). The following command generates files like PlSqlLexer.js, PlSqlLexer.tokens, PlSqlLexer.interp,PlSqlParser.tokens, PlSqlParser.interp, PlSqlParser.js and PlSqlParserListener.js
+Now, you can use antlr4 command in your terminal or command line in order to generate Parser using your grammer. PlSqlLexer.g4 and PlSqlParser.g4 are grammars we are using here. We borrowed these grammar from [here](https://github.com/antlr/grammars-v4/tree/master/plsql). The following commands generates files like PlSqlLexer.js, PlSqlLexer.tokens, PlSqlLexer.interp, PlSqlParser.tokens, PlSqlParser.interp, PlSqlParser.js and PlSqlParserListener.js.
+```
+antlr4 -Dlanguage=JavaScript PlSqlLexer.g4
+antlr4 -Dlanguage=JavaScript PlSqlParser.g4
+```
+The one last thing:
+* We are able to use require() in your client side JavaScript because of the require.js file inside lib folder. You can also find the same file [here](https://gist.github.com/wesleyduff/e229a7376e0c32261ee5). For more informaion about using require() in client side JavaScript, check out [this](https://stackoverflow.com/questions/19059580/client-on-node-uncaught-referenceerror-require-is-not-defined) stackoverflow thread.
+Now, you can open index.html file in your browser to run your app. 
