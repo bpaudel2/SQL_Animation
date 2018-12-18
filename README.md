@@ -31,3 +31,4 @@ java org.antlr.v4.Tool %*
 java org.antlr.v4.gui.TestRig %*
 // put them in the system PATH or any of the directories included in your PATH
 ```
+Now, you can use antlr4 command in your terminal or command line in order to generate Parser using your grammer. PlSqlLexer.g4 and PlSqlParser.g4 are grammar in our case. We borrowed these grammar form [here](https://github.com/antlr/grammars-v4/tree/master/plsql). The following command generates files like PlSqlLexer.js, PlSqlLexer.tokens, PlSqlLexer.interp,PlSqlParser.tokens, PlSqlParser.interp, PlSqlParser.js and PlSqlParserListener.js
