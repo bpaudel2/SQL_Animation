@@ -36,9 +36,9 @@
     </div>    
   </nav>
   
-  <div class="form-group">
-    <label>Select the table and click OK:</label>
-    <select id="tbllist">
+  <div class="form-group">          
+    <label for="formGroupExampleInput">Select the table and click OK:</label>
+    <select class="form-control" id="tbllist">
     <option value="1">Meta Data</option>
     <option value="2">Suppliers</option>
     <option value="3">Customers</option>
@@ -46,11 +46,11 @@
     <option value="5">Products</option>
     <option value="6">OrderDetails</option>
     </select>
-    <button id="btntbl" onclick="myfunction()">OK</button>        
+    <button id="btntbl" class="btn btn-primary" onclick="myfunction()">OK</button>        
   
   </div>
   
-  <div class="row bg-dark text-info">
+  <div class="row text-info" style="overflow:auto;">
     <p id="tblview"></p>
   </div>    
 </div>
