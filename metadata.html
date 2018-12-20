@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+        <link rel="stylesheet" href="style.css">
+<head>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="lib/require.js"></script>
+    <script src="tree.js"></script>
+    <script src="data.js"></script>
+            
+                
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Meta Data</title>
+</head>
+
+<body>
+<p>Select the table and click OK:</P>
+    <select id="tbllist">
+      <option value="1">Meta Data</option>
+      <option value="2">Suppliers</option>
+      <option value="3">Customers</option>
+      <option value="4">Orders</option>
+      <option value="5">Products</option>
+      <option value="6">OrderDetails</option>
+    </select>
+    <button id="btntbl" onclick="myfunction()">OK</button>
+    <div>
+      <p id="tblview"></p>
+    </div>    
+
+
+    <script>
+
+        function myfunction(){
+        var tblSelected= document.getElementById("tbllist").options[document.getElementById("tbllist").selectedIndex].text;
+        if(tblSelected=="Meta Data"){
+          var tbl = document.getElementById("curtbl");
+          if(tbl) tbl.parentNode.removeChild(tbl);
+          var x= document.createElement("TABLE");
+          x.setAttribute("id","curtbl");
+          document.getElementById("tblview").appendChild(x);
+          var supplierCaption=document.getElementById("curtbl").createCaption();
+          supplierCaption.innerHTML="<b>Meta Data</b>";
+          var c= document.createElement("TR");
+          c.setAttribute("id","myTr");
+          var d=document.createElement("TD");
+          var e=document.createTextNode("TABLE NAME");
+          var h=document.createElement("TD");
+          var i=document.createTextNode("COLUMNS");
+          document.getElementById("curtbl").appendChild(c);
+          d.appendChild(e);
+          h.appendChild(i);
+          document.getElementById("myTr").appendChild(d);
+          document.getElementById("myTr").appendChild(h);
+          for(var i=0;i<schema.length; ++i){
+            var y= document.createElement("TR");
+            y.setAttribute("id","myTr"+i);
+            var z= document.createElement("TD");
+            var t=document.createTextNode(schema[i].tabName_);
+            var j=document.createElement("TD");
+            var k=document.createTextNode(JSON.stringify(schema[i].columns_));
+            document.getElementById("curtbl").appendChild(y);
+            z.appendChild(t);
+            j.appendChild(k);
+            document.getElementById("myTr"+i).appendChild(z);
+            document.getElementById("myTr"+i).appendChild(j);
+          }
+        }else if(tblSelected=="Suppliers"){
+          tbl = document.getElementById("curtbl");
+          if(tbl) tbl.parentNode.removeChild(tbl);
+          var x= document.createElement("TABLE");
+          x.setAttribute("id","curtbl");
+          document.getElementById("tblview").appendChild(x);
+          var supplierCaption=document.getElementById("curtbl").createCaption();
+          supplierCaption.innerHTML="<b>Suppliers</b>";
+          var c = document.createElement("TR");
+          document.getElementById("curtbl").appendChild(c);
+          c.setAttribute("id","myTr");
+          for(var i=0; i< schema[0].columns_.length; i++){
+            var a = document.createElement("TD");
+            var b= document.createTextNode(schema[0].columns_[i].colName_);
+            document.getElementById("myTr").appendChild(a);
+            a.appendChild(b);
+          }
+          for(var i=0; i< data[0].length; i++){
+            var a = document.createElement("TR");
+            a.setAttribute("id", "myTr"+i);
+            document.getElementById("curtbl").appendChild(a);
+            for(var j=0; j< data[0][i].length; j++){
+              var d= document.createElement("TD");
+              var e= document.createTextNode(JSON.stringify(data[0][i][j]));
+              d.appendChild(e);
+              document.getElementById("myTr"+i).appendChild(d);
+            }
+            
+          }
+        }else if(tblSelected=="Customers"){
+          tbl = document.getElementById("curtbl");
+          if(tbl) tbl.parentNode.removeChild(tbl);
+          var x= document.createElement("TABLE");
+          x.setAttribute("id","curtbl");
+          document.getElementById("tblview").appendChild(x);
+          var supplierCaption=document.getElementById("curtbl").createCaption();
+          supplierCaption.innerHTML="<b>Customers</b>";
+          var c= document.createElement("TR");
+          document.getElementById("curtbl").appendChild(c);
+          c.setAttribute("id","myTr");
+
+          for(var i=0; i< schema[2].columns_.length; i++){
+            var a = document.createElement("TD");
+            var b= document.createTextNode(schema[2].columns_[i].colName_);
+            document.getElementById("myTr").appendChild(a);
+            a.appendChild(b);
+          }
+          for(var i=0; i< data[2].length; i++){
+            var a = document.createElement("TR");
+            a.setAttribute("id", "myTr"+i);
+            document.getElementById("curtbl").appendChild(a);
+            for(var j=0; j< data[2][i].length; j++){
+              var d= document.createElement("TD");
+              var e= document.createTextNode(JSON.stringify(data[2][i][j]));
+              d.appendChild(e);
+              document.getElementById("myTr"+i).appendChild(d);
+            }
+            
+          }
+
+        }else if(tblSelected=="Orders"){
+          tbl = document.getElementById("curtbl");
+          if(tbl) tbl.parentNode.removeChild(tbl);
+          var x= document.createElement("TABLE");
+          x.setAttribute("id","curtbl");
+          document.getElementById("tblview").appendChild(x);
+          var supplierCaption=document.getElementById("curtbl").createCaption();
+          supplierCaption.innerHTML="<b>Orders</b>";
+          var c= document.createElement("TR");
+
+          document.getElementById("curtbl").appendChild(c);
+          c.setAttribute("id","myTr");
+
+          for(var i=0; i< schema[3].columns_.length; i++){
+            var a = document.createElement("TD");
+            var b= document.createTextNode(schema[3].columns_[i].colName_);
+            document.getElementById("myTr").appendChild(a);
+            a.appendChild(b);
+          }
+          for(var i=0; i< data[2].length; i++){
+            var a = document.createElement("TR");
+            a.setAttribute("id", "myTr"+i);
+            document.getElementById("curtbl").appendChild(a);
+            for(var j=0; j< data[2][i].length; j++){
+              var d= document.createElement("TD");
+              var e= document.createTextNode(JSON.stringify(data[3][i][j]));
+              d.appendChild(e);
+              document.getElementById("myTr"+i).appendChild(d);
+            }
+            
+          }
+          
+        }else if(tblSelected=="Products"){
+          tbl = document.getElementById("curtbl");
+          if(tbl) tbl.parentNode.removeChild(tbl);
+          var x= document.createElement("TABLE");
+          x.setAttribute("id","curtbl");
+          document.getElementById("tblview").appendChild(x);
+          var supplierCaption=document.getElementById("curtbl").createCaption();
+          supplierCaption.innerHTML="<b>Products</b>";
+          var c= document.createElement("TR");
+
+          document.getElementById("curtbl").appendChild(c);
+          c.setAttribute("id","myTr");
+
+          for(var i=0; i< schema[1].columns_.length; i++){
+            var a = document.createElement("TD");
+            var b= document.createTextNode(schema[1].columns_[i].colName_);
+            document.getElementById("myTr").appendChild(a);
+            a.appendChild(b);
+          }
+          for(var i=0; i< data[2].length; i++){
+            var a = document.createElement("TR");
+            a.setAttribute("id", "myTr"+i);
+            document.getElementById("curtbl").appendChild(a);
+            for(var j=0; j< data[2][i].length; j++){
+              var d= document.createElement("TD");
+              var e= document.createTextNode(JSON.stringify(data[1][i][j]));
+              d.appendChild(e);
+              document.getElementById("myTr"+i).appendChild(d);
+            }
+            
+          }
+          
+        }else if(tblSelected=="OrderDetails"){
+          tbl = document.getElementById("curtbl");
+          if(tbl) tbl.parentNode.removeChild(tbl);
+          var x= document.createElement("TABLE");
+          x.setAttribute("id","curtbl");
+          document.getElementById("tblview").appendChild(x);
+          var supplierCaption=document.getElementById("curtbl").createCaption();
+          supplierCaption.innerHTML="<b>OrderDetails</b>";
+          var c= document.createElement("TR");
+
+          document.getElementById("curtbl").appendChild(c);
+          c.setAttribute("id","myTr");
+
+          for(var i=0; i< schema[4].columns_.length; i++){
+            var a = document.createElement("TD");
+            var b= document.createTextNode(schema[4].columns_[i].colName_);
+            document.getElementById("myTr").appendChild(a);
+            a.appendChild(b);
+          }
+          for(var i=0; i< data[4].length; i++){
+            var a = document.createElement("TR");
+            a.setAttribute("id", "myTr"+i);
+            document.getElementById("curtbl").appendChild(a);
+            for(var j=0; j< data[2][i].length; j++){
+              var d= document.createElement("TD");
+              var e= document.createTextNode(JSON.stringify(data[4][i][j]));
+              d.appendChild(e);
+              document.getElementById("myTr"+i).appendChild(d);
+            }
+            
+          }
+        }
+}
+    </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+ 
+</body>
+
+</html>
