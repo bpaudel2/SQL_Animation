@@ -35,18 +35,22 @@
       <a class="nav-link active text-white" href="./metadata.html">Meta Data</a>
     </div>    
   </nav>
-      
-  <p>Select the table and click OK:</P>
-  <select id="tbllist">
+  
+  <div class="form-group">
+    <label>Select the table and click OK:</label>
+    <select id="tbllist">
     <option value="1">Meta Data</option>
     <option value="2">Suppliers</option>
     <option value="3">Customers</option>
     <option value="4">Orders</option>
     <option value="5">Products</option>
     <option value="6">OrderDetails</option>
-  </select>
-  <button id="btntbl" onclick="myfunction()">OK</button>
-  <div>
+    </select>
+    <button id="btntbl" onclick="myfunction()">OK</button>        
+  
+  </div>
+  
+  <div class="row bg-dark text-info">
     <p id="tblview"></p>
   </div>    
 </div>
